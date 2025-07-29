@@ -57,11 +57,13 @@ return cardsHolder;
 if( card.material.userData == no) {
    // tween forward
    gsap.to(card.position, {duration:.5, z:1} )
+   gsap.to(card.scale, {duration:.5, z:1.15} )
 }
 else{
     if(card.position.z != 0){
         //tween back
         gsap.to(card.position, {duration:.5, z:0} )
+        gsap.to(card.scale, {duration:.5, z:1} )
     }
 }
 
@@ -74,6 +76,7 @@ else{
             if(card.position.z != 0){
                 //tween back
                 gsap.to(card.position, {duration:.5, z:0} )
+                gsap.to(card.scale, {duration:.5, z:1} )
             }
             })
         
@@ -83,7 +86,6 @@ else{
 returnCard = (no)=>{
     cardsHolder.children.forEach(card =>{
         if( card.material.userData == no) {
-       //  let angflip = card.rotation.y>0? Math.PI*2: Math.PI;
                 //flip
                 gsap.to(card.rotation, {duration:.5, y: card.rotation.y > Math.PI ? 0 : Math.PI,
                     overwrite:false

@@ -28,7 +28,11 @@ function animate() {
 	raycaster.setFromCamera( pointer, camera );
     const intersects = raycaster.intersectObjects( cardContainer.children );
   if(!!intersects.length>0 ) 
-    {  if(intersects[0].object.material.userData != cardHighlighted)
+    { 
+      
+        document.body.style.cursor = 'pointer';
+        
+        if(intersects[0].object.material.userData != cardHighlighted)
     {
         cardHighlighted = intersects[0].object.material.userData;
 // hover action
@@ -40,7 +44,9 @@ cards.hoverCards(cardHighlighted);
 
     } 
 
-    else{cards.unhoverCards()}
+    else{cards.unhoverCards()
+        document.body.style.cursor = 'default';
+    }
   renderer.render( scene, camera );
 
 }
@@ -70,5 +76,9 @@ function onMouseDown (event){
     cards.returnCard(cardHighlighted);
 }
 
+
+function onMouseGrab(){}
+
 window.addEventListener( 'pointermove', onPointerMove );
 window.addEventListener( 'click', onMouseDown );
+window.addEventListener( 'mousedown', onMouseGrab );
