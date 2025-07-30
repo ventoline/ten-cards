@@ -1,7 +1,28 @@
 import * as THREE from "three";
-//import  {gsap} from 'gsap';
+//import { TextGeometry } from "addons";
+//import { OBJLoader } from "three/addons/loaders/OBJLoader.js";
+import { TextGeometry } from "textGeometry";
+import { FontLoader } from "fontLoader";
+/* import {
+  OrbitControls,
+  FontLoader,
+  TextGeometry,
+} from "three/examples/jsm/Addons.js"; */
 
 const cardsHolder = new THREE.Object3D();
+const cardNames = [
+  "Hi",
+  "Ola",
+  "Hej",
+  "Ohaio",
+  "Ciao",
+  "Hello",
+  "Hey",
+  "Salut",
+  "NiHao",
+  "Salam",
+  "Kalimera",
+];
 
 export default class Cards {
   // 3D object
@@ -19,10 +40,56 @@ export default class Cards {
     });
     material.userData.no = nb;
     const plane = new THREE.Mesh(geometry, material);
+
+    // add text and texture
+    const texture = new THREE.TextureLoader().load("/texture_card.png");
+    const materialImg = new THREE.MeshBasicMaterial({
+      color: 0xffffff,
+      map: texture,
+      // transparent: true,
+      //opacity: 0.85,
+      side: THREE.BackSide,
+    });
+    texture.repeat.set(1.25, 1);
+
+    const backPlane = new THREE.Mesh(geometry, materialImg);
+
+    // backPlane.position.z = -0.01;
+    plane.add(backPlane);
+
+    let title = new TextGeometry("hi", { size: 2 });
+    let textMesh = new THREE.Mesh(
+      title,
+      new THREE.MeshBasicMaterial({
+        color: 0xff0000,
+      })
+    );
+    // plane.add(textMesh);
+
+    const loader = new FontLoader();
+
+    loader.load("/fonts/helvetiker_bold.typeface.json", function (font) {
+      const shapes = font.generateShapes(cardNames[nb], 0.15);
+      const matLite = new THREE.MeshBasicMaterial({
+        color: 0x111111,
+        transparent: true,
+        opacity: 0.8,
+        side: THREE.FrontSide,
+      });
+      const tgeo = new THREE.ShapeGeometry(shapes);
+      const ttext = new THREE.Mesh(tgeo, matLite);
+
+      plane.add(ttext);
+      ttext.rotation.y = Math.PI;
+      ttext.position.x = 0.55;
+      ttext.position.y = -0.25;
+      ttext.position.z = -0.1;
+    });
+
     return plane;
   };
 
-  //container
+  //Container
 
   makeCards = (no) => {
     // const cardsHolder  = new THREE.Object3D();
@@ -36,12 +103,6 @@ export default class Cards {
       newCard.position.x += (newCard.geometry.parameters.width + 0.1) * (i % 5);
       newCard.position.y -=
         (newCard.geometry.parameters.height + 0.1) * Math.floor(i / 5);
-
-      //INTERACTION
-      //newCard.addEventListener('hovered')
-      //clicked
-      //dragged
-      //dropped >  change position
     }
 
     //CENTER CARDS
@@ -53,13 +114,10 @@ export default class Cards {
     cardsHolder.position.x -= maxWidth / 2;
     cardsHolder.position.y += maxHeight / 2;
 
-    console.log(cardsHolder);
-
     return cardsHolder;
   };
 
   hoverCards = (no) => {
-    console.log("hovering", no);
     cardsHolder.children.forEach((card) => {
       if (card.material.userData == no) {
         // tween forward
@@ -113,15 +171,11 @@ export default class Cards {
   };
 
   drop = (card) => {
-    console.log("drop card", card);
     // get position
-    let dropSpot = card.position;
-
-    console.log("card.position", card.position);
-    // console.log("card.height", card.geometry.parameters.height);
 
     //consider a 5 x 2 grid
     //  get closest spot on the grid
+
     let col = Math.min(
       4,
       Math.floor(card.position.x / card.geometry.parameters.width)
@@ -135,12 +189,8 @@ export default class Cards {
 
     raw = raw > 1 ? 1 : raw;
 
-    console.log("on the grid ", col, "x", raw);
-
     // swap
     if (raw * 5 + col != card.material.userData.no) {
-      console.log("swap");
-      console.log(card.material.userData.no);
       // find overlaid card
       cardsHolder.children.forEach((o) => {
         if (o.material.userData.no == raw * 5 + col) {
@@ -148,12 +198,6 @@ export default class Cards {
             (card.material.userData.no % 5) * card.geometry.parameters.width +
             (card.material.userData.no % 5) * 0.1;
 
-          console.log(
-            "pos y",
-            -Math.floor(card.material.userData.no / 5) *
-              (card.geometry.parameters.height + 0.1)
-          );
-          console.log("ard.material.userData.no", card.material.userData.no);
           o.position.y =
             -Math.floor(card.material.userData.no / 5) *
             (card.geometry.parameters.height + 0.1);
@@ -163,15 +207,12 @@ export default class Cards {
       });
     }
 
-    console.log(raw * 5 + col, card.material.userData.no);
-
     //replace cards
 
     card.position.y = -raw * card.geometry.parameters.height - raw * 0.1;
     card.position.x = col * card.geometry.parameters.width + col * 0.1;
 
     card.material.userData.no = raw * 5 + col;
-    console.log(card.material.userData.no);
   };
 }
 

@@ -26,6 +26,7 @@ const cardContainer = cards.makeCards(cardsAmount);
 scene.add(cardContainer);
 
 camera.position.z = 5;
+camera.position.x = -0.65;
 
 const raycaster = new THREE.Raycaster();
 const pointer = new THREE.Vector2();
@@ -33,9 +34,12 @@ const pointer = new THREE.Vector2();
 controls = new DragControls(
   cardContainer.children,
   camera,
-  renderer.domElement
+  renderer.domElement,
+  { recursive: false }
 );
-controls.rotateSpeed = 2;
+
+controls.recursive = false;
+
 controls.addEventListener("drag", controlDragging);
 controls.addEventListener("dragend", onMouseDrop);
 controls.addEventListener("click", onMouseDown);
@@ -52,7 +56,6 @@ function animate() {
 
       // hover effect
       cards.hoverCards(cardHighlighted);
-      console.log(intersects[0].object.material.userData);
     }
   } else {
     cards.unhoverCards();
@@ -69,13 +72,6 @@ window.onresize = () => {
 };
 
 function onPointerMove(event) {
-  // if (mousedowning) onMouseGrab(); // grab
-  // if (mousedowning && !dragging) {
-  //   dragging = true;
-  // }
-
-  // console.log("onPointerMove", event.type);
-
   // calculate pointer position in normalized device coordinates
   // (-1 to +1) for both components
   pointer.x = (event.clientX / window.innerWidth) * 2 - 1;
@@ -83,48 +79,21 @@ function onPointerMove(event) {
 }
 
 function onMouseDown(event) {
-  //  mousedowning = true;
-  console.log("onMouseDown", event.type);
-  console.log("dragging", dragging);
-  // if (!dragging) {
   cards.returnCard(cardHighlighted);
-  // }
 }
 
-function onMouseUp(event) {
-  //mousedowning = false;
-  // dragging = false;
-  //  console.log("dragging", dragging);
-  console.log("onMouseUp", event.type);
-}
-
-function controlDragging(e) {
-  console.log("dragging controls", e);
-}
+function controlDragging(e) {}
 
 function onMouseGrab() {
-  // if (!dragging) return;
-  console.log("grabbing", intersects[0]);
-  console.log("dragging", dragging);
-
   document.body.style.cursor = "grab";
-
   intersects[0].object.position.x -= intersects[0].point.x + intersects[0].uv.x;
   cards.grab(cardHighlighted);
 }
 
 function onMouseDrop(event) {
-  console.log("onmouseDrop", event);
   cards.drop(event.object);
 }
 
-let canvas = document.querySelector("canvas");
-console.log("canvas", canvas);
 window.addEventListener("pointermove", onPointerMove);
-//window.addEventListener("mouseup", onMouseUp);
 window.addEventListener("click", onMouseDown);
 //window.addEventListener("mousedown", onMouseGrab);
-/* window.addEventListener("dragover", function (event) {
-  event.preventDefault();
-}); */
-//window.addEventListener("dragend", onMouseDrop);
