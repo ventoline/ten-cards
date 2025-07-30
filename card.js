@@ -136,16 +136,38 @@ export default class Cards {
     // swap
     if (raw * 5 + col != card.material.userData.no) {
       console.log("swap");
+      console.log(card.material.userData.no);
+      // find overlaid card
+      cardsHolder.children.forEach((o) => {
+        if (o.material.userData.no == raw * 5 + col) {
+          o.position.x =
+            (card.material.userData.no % 5) * card.geometry.parameters.width +
+            (card.material.userData.no % 5) * 0.1;
+
+          console.log(
+            "pos y",
+            -Math.floor(card.material.userData.no / 5) *
+              (card.geometry.parameters.height + 0.1)
+          );
+          console.log("ard.material.userData.no", card.material.userData.no);
+          o.position.y =
+            -Math.floor(card.material.userData.no / 5) *
+            (card.geometry.parameters.height + 0.1);
+
+          o.material.userData.no = card.material.userData.no;
+        }
+      });
     }
 
     console.log(raw * 5 + col, card.material.userData.no);
 
     //replace cards
-    //TODO add tweens
+
     card.position.y = -raw * card.geometry.parameters.height - raw * 0.1;
     card.position.x = col * card.geometry.parameters.width + col * 0.1;
 
-    // tween both cards to new position
+    card.material.userData.no = raw * 5 + col;
+    console.log(card.material.userData.no);
   };
 }
 
