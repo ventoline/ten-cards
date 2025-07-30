@@ -2,6 +2,6 @@
 
 ![Alt text](/screen_tencards.png)
 
-#Simple flip card prototype
+# Interactive flip cards prototype
 
-Built usding ThreeJS, and GSAP libraries
+Built using ThreeJS, and GSAP libraries (vanilla JS)
