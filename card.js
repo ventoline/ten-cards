@@ -63,12 +63,16 @@ export default class Cards {
     cardsHolder.children.forEach((card) => {
       if (card.material.userData == no) {
         // tween forward
-        gsap.to(card.position, { duration: 0.5, z: 1 });
+        gsap.to(card.position, { duration: 0.5, ease: "back.inOut", z: 1 });
         gsap.to(card.scale, { duration: 0.5, z: 1.15 });
       } else {
         if (card.position.z != 0) {
           //tween back
-          gsap.to(card.position, { duration: 0.5, z: 0 });
+          gsap.to(card.position, {
+            duration: 0.5,
+            ease: "back.inOut",
+            z: 0,
+          });
           gsap.to(card.scale, { duration: 0.5, z: 1 });
         }
       }
